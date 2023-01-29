@@ -81,6 +81,16 @@ function divFunc() {
 }
 
 function render() {
+  // get eqResult and append
+  $.ajax({
+    method: "GET",
+    url: "/eqResult",
+  }).then((response) => {
+    console.log(`Render:`, response);
+
+    $(`#solutionDiv`).empty();
+    $(`#solutionDiv`).append(response);
+  });
   //get calcArr and append
   $.ajax({
     method: "GET",
@@ -94,16 +104,6 @@ function render() {
       $(`#historyDiv`).append(`<li>${listItem}</li>`);
     }
   });
-  //get eqResulst and append
-  // $.ajax({
-  //   method: "GET",
-  //   url: "/eqResult",
-  // }).then((response) => {
-  //   console.log(`Render:`, response);
-
-  //   $(`#solutionDiv`).empty();
-  //   $(`#solutionDiv`).append(response);
-  // });
 }
 
 function clearInputs() {
