@@ -1,112 +1,63 @@
 $(document).ready(onReady);
 
-function onReady() {
-  console.log("ready the floops");
+let operand;
 
-  $(`#calcDiv`).on(`click`, `#addBut`, addFunc);
-  $(`#calcDiv`).on(`click`, `#subBut`, subFunc);
-  $(`#calcDiv`).on(`click`, `#multBut`, multFunc);
-  $(`#calcDiv`).on(`click`, `#divBut`, divFunc);
-  $(`#calcDiv`).on(`click`, `#eqBut`, render);
+function onReady() {
+  console.log('ready the floops');
+
+  $(`#calcDiv`).on(`click`, `.opBut`, selectOp);
+  $(`#calcDiv`).on(`click`, `#eqBut`, eqFunc);
   $(`#calcDiv`).on(`click`, `#clearBut`, clearInputs);
 }
 
-//Send input numbers to server
-function addFunc() {
-  let sendEq = {
-    numbOne: Number($(`#numbOne`).val()),
-    operand: $(`#addBut`).val(),
-    numbTwo: Number($(`#numbTwo`).val()),
-  };
-  $.ajax({
-    method: "POST",
-    url: "/calc",
-    data: { sendEq },
-  })
-    .then((response) => {})
-    .catch(function (err) {
-      alert("Math is dead. Physical forms collapse. The Old Gods descend.");
-    });
+function selectOp() {
+  operand = $(this).val();
+  console.log('operand:', operand);
 }
 
-function subFunc() {
+//Send input to server
+function eqFunc() {
   let sendEq = {
     numbOne: Number($(`#numbOne`).val()),
-    operand: $(`#subBut`).val(),
+    operand: operand,
     numbTwo: Number($(`#numbTwo`).val()),
   };
+  console.log('in POST sendeq:', sendEq);
   $.ajax({
-    method: "POST",
-    url: "/calc",
+    method: 'POST',
+    url: '/calc',
     data: { sendEq },
   })
-    .then((response) => {})
+    .then((response) => {
+      render(response);
+    })
     .catch(function (err) {
-      alert("Math is dead. Physical forms collapse. The Old Gods descend.");
-    });
-}
-
-function multFunc() {
-  let sendEq = {
-    numbOne: Number($(`#numbOne`).val()),
-    operand: $(`#multBut`).val(),
-    numbTwo: Number($(`#numbTwo`).val()),
-  };
-  $.ajax({
-    method: "POST",
-    url: "/calc",
-    data: { sendEq },
-  })
-    .then((response) => {})
-    .catch(function (err) {
-      alert("Math is dead. Physical forms collapse. The Old Gods descend.");
-    });
-}
-
-function divFunc() {
-  let sendEq = {
-    numbOne: Number($(`#numbOne`).val()),
-    operand: $(`#divBut`).val(),
-    numbTwo: Number($(`#numbTwo`).val()),
-  };
-  $.ajax({
-    method: "POST",
-    url: "/calc",
-    data: { sendEq },
-  })
-    .then((response) => {})
-    .catch(function (err) {
-      alert("Math is dead. Physical forms collapse. The Old Gods descend.");
+      alert(
+        'Math is dead. Physical forms collapse. The Old Gods descend.',
+        err
+      );
     });
 }
 
 function render() {
   // get eqResult and append
   $.ajax({
-    method: "GET",
-    url: "/eqResult",
+    method: 'GET',
+    url: '/calc',
   }).then((response) => {
     console.log(`Render:`, response);
 
     $(`#solutionDiv`).empty();
-    $(`#solutionDiv`).append(response);
-  });
-  //get calcArr and append
-  $.ajax({
-    method: "GET",
-    url: "/calc",
-  }).then((response) => {
-    console.log(`Render:`, response);
+    $(`#solutionDiv`).append(response[response.length - 1]);
 
-    $(`#historyDiv`).empty();
-    for (let i = 0; i < response.length; i++) {
-      let listItem = response[i];
-      $(`#historyDiv`).append(`<li>${listItem}</li>`);
+    $('#historyDiv').empty();
+    for (result of response) {
+      $(`#historyDiv`).append(`<li>${result}</li>`);
     }
   });
 }
 
 function clearInputs() {
-  $(`#numbOne`).val("");
-  $(`#numbTwo`).val("");
+  $(`#numbOne`).val('');
+  $(`#numbTwo`).val('');
 }
